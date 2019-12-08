@@ -2,59 +2,59 @@ import os,time,random,sys,math,copy
 #import itertools as it
 import numpy as np
 
-TAMANHOTABULEIRO = 3
+TAMANHOTABULEIRO = 4
 TEMPERATURA = 100
+
+
+m = [[1,1,0,0],[0,1,0,0],[0,1,1,0],[0,1,1,0]]
+# [print(x) for x in m]
+# print()
+
+# ataque nas colunas
+def total_colunas(l):
+	ll = list(zip(*l))
+	ab = [sum(x)-1 for x in ll if sum(x)> 1]
+	#print(ll)
+	return sum(ab)
+
+# ataque nas linhas
+def total_linhas(l):
+	ataque_linhas = 0
+	for x in (l):
+		if sum(x) > 1:
+			ataque_linhas += sum(x)-1
+	return ataque_linhas
+
 # --------------------------------
+def get_linha(matriz):
+	 #print([[c for c in r] for r in matriz])
+	 return [[c for c in r] for r in matriz]
 
-def quantidade_ataques(l):
-	d = 0
-	total = 0
-	while d <= len(l)-1:
-			cont = 0
-			i = d
-			j = 0
-			while j <= d:
-					if l[j][i] == 1:
-							cont +=1
-					i = i-1
-					j =j+1
-			if cont > 1:
-					cont -=1
-					total = total+cont
-			else:
-					total = total+cont
-			d +=1
-							
-	quant_ataques = 0
+def get_coluna(matriz):
+	 #print('SAIDA',list(zip(*matriz)))
+	 return list(zip(*matriz))
 
-	for x in range(len(l)-2,-1,-1):
-			aux_quant_ataques = 0
-			j = 0
-			for i in range(x,len(l)):
-					if l[i][j] == 1:
-							aux_quant_ataques += l[i][j]
-					j+=1
+def get_diagonal_baixo_cima(matriz):
+	 b = [None] * (len(matriz) - 1)
+	 matriz = [b[i:] + r + b[:i] for i, r in enumerate([list(x) for x in get_coluna(matriz)])]
+	 #print('\ndiagonal baixo p/cima',list([[c for c in r if c is not None] for r in get_coluna(matriz)]))
+	 return list([[c for c in r if c is not None] for r in zip(*matriz)])
 
-			aux_quant_ataques -= 1
-			quant_ataques += aux_quant_ataques
+def get_diagonal_cima_baixo(matriz):
+	 b = [None] * (len(matriz) - 1)
+	 matriz = [b[:i] + r + b[i:] for i, r in enumerate(get_linha(matriz))]
+	 #print('\ndiagonal cima p/baixo',list([[c for c in r if c is not None] for r in get_coluna(matriz)]))
+	 return list([[c for c in r if c is not None] for r in zip(*matriz)])
 
 
 
-	for x in range(1,len(l)-1):          
-			i = 0
-			aux_quant_ataques = 0
-
-			for j in range(x,len(l)):        
-					aux_quant_ataques += l[i][j]
-					i+=1
-			
-			aux_quant_ataques -= 1
-			quant_ataques += aux_quant_ataques
-	
-	return quant_ataques+total
-
-# -------------------------
-
+def total_ataques(matriz):
+	t_diagonal_cima = [sum(x)- 1 for x in get_diagonal_cima_baixo(matriz) if sum(x) > 1]
+	t_diagonal_baixo = [sum(x)- 1 for x in get_diagonal_baixo_cima(matriz) if sum(x) > 1]
+	#print('TOTAL ATAQUES', total_ataques(matriz))
+	return sum(t_diagonal_baixo)+sum(t_diagonal_cima)+total_colunas(matriz)+total_linhas(matriz)
+#print('TOTAL ATAQUES', total_ataques(matriz))
+# -----------------------------------------------------------------
 
 def random_choice(tamanho=TAMANHOTABULEIRO):
 	prob_alta = (tamanho-1)
@@ -79,29 +79,25 @@ def quantidade_rainhas(atual):
 def gerar_rainhas_aleatoria(tamanho=TAMANHOTABULEIRO):
 	randomico = random_choice()
 	d = quantidade_rainhas(randomico)
-	if d >= (tamanho*tamanho)/tamanho+1:
-			print('Pode ate nao ter solucao')
+
 	if d <= 2:
 		while True:
 				randomico = random_choice()
 				d= quantidade_rainhas(randomico)
 				if d > 2 :
 					break
-
+	
 	lista = []
-
 	for x in range(0,tamanho):
 			lista.append(randomico[x])
 	#print(randomico)
 	print('Tabuleiro Gerado')
 	[print(x, end='\n') for x in lista]
 	print(f'Rainhas => {d}')
+	if d >= (tamanho*tamanho)/tamanho+1:
+			print('Aviso! Pode nao ter solucao ou demorar para achar')	
 	return lista
 
-	for x in range(0,tamanho):
-			lista.append(randomico[x])
-
-	return lista
 
 
 def localiza_rainhas(atual):
@@ -113,51 +109,6 @@ def localiza_rainhas(atual):
 							lista_rainha.append((x, y))
 	return lista_rainha
 
-# '''
-# def calcula_ataques(atual):
-# 	''' Fazer varredura nas linhas, colunas e nas diagonais '''
-# 	ataque = 0
-# 	ataque_linhas = 0
-# 	# ataque nas linhas
-# 	for x in (atual):
-# 			if sum(x) > 1:
-# 					ataque_linhas += sum(x)-1
-# 	ataque += ataque_linhas
-
-# 	ataque_colunas = 0
-# 	for x in range(len(atual)):
-# 			n_linhas = 0
-# 			for y in range(len(atual)):
-# 					n_linhas += atual[y][x]
-# 					if n_linhas > 1:
-# 							ataque_colunas += n_linhas-1
-# 	ataque += ataque_colunas
-
-# 	prox = localiza_rainhas(atual)
-# 	d = 0
-# 	for i, coordenada in enumerate(prox):
-# 			x, y = coordenada
-# 			#print(f'x={x} e y={y}')
-# 			# ataque diagonal esquerdo
-# 			w, z = x+1, y+1
-# 			#print(f'w={w} e z={z}')
-# 			while (z > 0 and z < len(atual) and w < len(atual)):
-# 					if atual[w][z] == 1:
-# 							d += 1
-# 							break
-# 					z -= 1
-# 					w += 1
-# 			# ataque diagonal direito
-# 			a, b = x+1, y+1
-# 			while (a < len(atual) and b < len(atual)):
-# 					if atual[a][b] == 1:
-# 							d += 1
-# 							break
-# 					a += 1
-# 					b += 1
-# 	ataque += d
-# 	return ataque
-# '''
 
 def move_rainha_aleatoria(atual, p):
 	''' mover uma rainha por meio de uma escolha randomica '''
@@ -181,7 +132,7 @@ def tempera_simulada(atual, p=1, T=TEMPERATURA):
 	for temp in range(T, 1,-1):
 			time.sleep(1)
 			print('TEMPERATURA atual: ', temp)
-			ataque = quantidade_ataques(atual)
+			ataque = total_ataques(atual)
 			print('Atual: ', atual)
 			print('Ataques: ', ataque)
 			if ataque == 0:
@@ -190,13 +141,16 @@ def tempera_simulada(atual, p=1, T=TEMPERATURA):
 					#return ('solucao', atual,ataque,(time.time()-inicio))
 					break
 			vizinho = move_rainha_aleatoria(copy.deepcopy(atual), p)
-			print('Nova configuracao')
-			[print(x, end='\n') for x in vizinho]	
-			deltaE = quantidade_ataques(vizinho) - ataque  # exp((F(vizinho) - F(atual)))
+			# print('Nova configuracao')
+			# [print(x, end='\n') for x in vizinho]	
+			deltaE = total_ataques(vizinho) - ataque  # exp((F(vizinho) - F(atual)))
 			print('Delta => ', deltaE)
 
 			if deltaE > 0:
 					atual = vizinho
+					print('Nova configuracao')
+					[print(x, end='\n') for x in atual]	
+					print('posicoes rainhas',localiza_rainhas(atual))
 			# Aceitar a jogada com certa probabilidade
 			else:
 					#novo = random.randint(0, 100)
@@ -209,17 +163,18 @@ def tempera_simulada(atual, p=1, T=TEMPERATURA):
 		print('Achou a Solucao')
 		print('Ataque =>',ataque)
 		[print(x, end='\n') for x in atual]
-		print('Tempo de execucao: ',(time.time()-inicio))
+		print('Tempo de execucao: (^^)',(time.time()-inicio))
 	else:
-		('Nao achou solução')
+		[print(x, end='\n') for x in atual]
+		print('Nao achou solucao\nTempo de execuccao: ',(time.time()-inicio))
 
-#[print(x) for x in random_choice()]
+
 
 tab = gerar_rainhas_aleatoria()
 
-#[print(x, end='\n') for x in tab]
-print('posicao das rainhas:')
-[print(x, end=' ') for x in localiza_rainhas(tab)]
-print('\n---------------------')
+print('posicao das rainhas:',[x  for x in localiza_rainhas(tab)])
+
+print('\nTotal Ataques =>',total_ataques(tab))
+print('\n--------------------------------------------------------------------')
 time.sleep(2)
 tempera_simulada(tab,T=5)
