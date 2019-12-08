@@ -20,9 +20,9 @@ class Tabuleiro:
         # if(count % 2 == 0):
         #     break
 
-        # self.tabuleiro.append([0,1,2])
-        # self.tabuleiro.append([4,5,3])
-        # self.tabuleiro.append([7,8,6])
+        #self.tabuleiro.append([0,1,2])
+        #self.tabuleiro.append([4,5,3])
+        #self.tabuleiro.append([7,8,6])
 
         self.tabuleiro.append([2,0,4])
         self.tabuleiro.append([3,1,6])
@@ -85,7 +85,7 @@ class Tabuleiro:
         filhos_gerados = []
         for i in mover:
             filho = self.movimentar(self.tabuleiro,x,y,i[0],i[1])
-            if filho is not None:
+            if len(filho) > 1:
                 filho_No = Tabuleiro(self.tamanho)
                 [filho_No.tabuleiro.append(x) for x in filho]
                 filho_No.zero_position[0], filho_No.zero_position[1] = self.posicao_zero()
@@ -104,7 +104,7 @@ class Tabuleiro:
             lista_temp[x1][y1] = temp
             return lista_temp
         else:
-            return None
+            return []
 
 
     def manhatan_distancia_ideal(self):

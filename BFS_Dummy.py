@@ -12,12 +12,15 @@ tabuleiro.preencher_tabuleiro()
 
 
 tabuleiros_visitados = []
-
+visitas = []
 tabuleiros_visitados.append(tabuleiro)
+visitas.append(tabuleiro.tabuleiro)
+
 
 #[print(x, 'ta na lista') for x in tabuleiros_visitados if tabuleiro in tabuleiros_visitados ]
 lista_indices = [-1]
 
+passos = 0
 achou = False
 if ideal in tabuleiros_visitados:
   print('Tabuleiro gerado tem a configuracao ideal')
@@ -30,21 +33,26 @@ else:
     
     for tabuleiro in tabuleiros_visitados:
         #tabuleiros =  gerar_filhos_tabuleiro
-        # print(f'tamanho dos filhos gerados: {len(tabuleiros)}')    
+        print('Filhos gerados')    
         for tab in tabuleiro.gerar_filhos_tabuleiro():
             #print(type(tab), tab)
             if tab not in tabuleiros_visitados:
-                #print(f'Filho: {tab}')
                 tabuleiros_visitados.append(tab)
+                visitas.append(tab.tabuleiro)
                 lista_indices.append(tabuleiros_visitados.index(tabuleiro))
-                print('Filho {} '.format(tab))
-                time.sleep(1)
+                [print(x) for x in tab.tabuleiro]
+                print()
+                time.sleep(0.5)
             else:
-              print(f'{tab} ja ta na lista')
-        if ideal in tabuleiros_visitados:
+              pass
+              #print(f'{tab} ja ta na lista')
+        if ideal.tabuleiro in visitas:
             print('\nAchou o Tabuleiro ideal!!!')
             achou = True
             break
+        passos+=1
+        print('pasos',passos)
+        #print('visitadas: ',visitas)
         
     print('lista de indices=>',lista_indices)
     time.sleep(1)
