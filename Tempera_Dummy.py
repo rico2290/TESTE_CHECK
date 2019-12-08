@@ -91,9 +91,9 @@ def gerar_rainhas_aleatoria(tamanho=TAMANHOTABULEIRO):
 	for x in range(0,tamanho):
 			lista.append(randomico[x])
 	#print(randomico)
-	print('Tabuleiro Gerado')
-	[print(x, end='\n') for x in lista]
-	print(f'Rainhas => {d}')
+	# print('Tabuleiro Gerado')
+	# [print(x, end='\n') for x in lista]
+	# print(f'Rainhas => {d}')
 	if d >= (tamanho*tamanho)/tamanho+1:
 			print('Aviso! Pode nao ter solucao ou demorar para achar')	
 	return lista
@@ -126,19 +126,17 @@ def move_rainha_aleatoria(atual, p):
 	return atual
 
 def tempera_simulada(atual, p=1, T=TEMPERATURA):
-
+	[print(x) for x in atual],print('Ataques: ', total_ataques(atual)),print('Posicao Rainhas: ',localiza_rainhas(atual))
+	print()
 	achou = False
 	inicio = time.time()
 	for temp in range(T, 1,-1):
 			time.sleep(1)
 			print('TEMPERATURA atual: ', temp)
 			ataque = total_ataques(atual)
-			print('Atual: ', atual)
-			print('Ataques: ', ataque)
+			# print('Posicao Rainhas: ',localiza_rainhas(atual))
 			if ataque == 0:
 					achou = True
-					#print('Achou a Solucao')
-					#return ('solucao', atual,ataque,(time.time()-inicio))
 					break
 			vizinho = move_rainha_aleatoria(copy.deepcopy(atual), p)
 			# print('Nova configuracao')
@@ -146,18 +144,22 @@ def tempera_simulada(atual, p=1, T=TEMPERATURA):
 			deltaE = total_ataques(vizinho) - ataque  # exp((F(vizinho) - F(atual)))
 			print('Delta => ', deltaE)
 
-			if deltaE > 0:
+			if deltaE < 0:
 					atual = vizinho
-					print('Nova configuracao')
-					[print(x, end='\n') for x in atual]	
-					print('posicoes rainhas',localiza_rainhas(atual))
+					print('Configuracao Atual'),[print(x) for x in  atual], print('Ataques: ', ataque)
+					print('Posicao Rainhas: ',localiza_rainhas(atual))
+					# print('Nova configuracao')
+					# [print(x, end='\n') for x in atual]	
+					# print('posicoes rainhas',localiza_rainhas(atual))
 			# Aceitar a jogada com certa probabilidade
 			else:
-					#novo = random.randint(0, 100)
-					print(f'Valor para teste probabilidade: {deltaE} ')
+					novo = random.randint(0, 2)
+					print(f'Valor para teste : {novo} ')
 					print('Probabilidade : ',math.exp(deltaE/T)) # exp((F(vizinho) - F(atual))/T)
-					if deltaE < math.exp(deltaE/T):
+					if novo < math.exp(deltaE/T):
 							atual = vizinho
+							print('Configuracao Atual'),[print(x) for x in  atual], print('Ataques: ', ataque)
+			print()
 				
 	if achou:
 		print('Achou a Solucao')
@@ -172,9 +174,12 @@ def tempera_simulada(atual, p=1, T=TEMPERATURA):
 
 tab = gerar_rainhas_aleatoria()
 
-print('posicao das rainhas:',[x  for x in localiza_rainhas(tab)])
+#print('posicao das rainhas:',[x  for x in localiza_rainhas(tab)])
 
-print('\nTotal Ataques =>',total_ataques(tab))
-print('\n--------------------------------------------------------------------')
-time.sleep(2)
-tempera_simulada(tab,T=5)
+if total_ataques(tab) == 0:
+	print('O prorpio tabuleiro eha solucao')
+else:
+	# print('Total Ataques =>',total_ataques(tab))
+	# print('\n--------------------------------------------------------------------')
+	# time.sleep(2)
+	tempera_simulada(tab,T=100)
