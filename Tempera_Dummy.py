@@ -121,16 +121,17 @@ def move_rainha_aleatoria(atual, p):
 			if atual[x][a] == 0:
 					aux = atual[x][a]
 					atual[x][a] = atual[x][y]
-					atual[x][y] = aux
+					atual[x][y] = aux #atual[x][a] # 
 					break
 	return atual
 
 def tempera_simulada(atual, p=1, T=TEMPERATURA):
-	[print(x) for x in atual],print('Ataques: ', total_ataques(atual)),print('Posicao Rainhas: ',localiza_rainhas(atual))
+	[print(x) for x in atual],print('N} rainhas: ', quantidade_rainhas(atual)),print('Ataques: ', total_ataques(atual))
+	print('Posicao Rainhas: ',localiza_rainhas(atual))
 	print()
 	achou = False
 	inicio = time.time()
-	for temp in range(T, 1,-1):
+	for temp in range(T, 0,-1):
 			time.sleep(1)
 			print('TEMPERATURA atual: ', temp)
 			ataque = total_ataques(atual)
@@ -141,22 +142,20 @@ def tempera_simulada(atual, p=1, T=TEMPERATURA):
 			vizinho = move_rainha_aleatoria(copy.deepcopy(atual), p)
 			# print('Nova configuracao')
 			# [print(x, end='\n') for x in vizinho]	
-			deltaE = total_ataques(vizinho) - ataque  # exp((F(vizinho) - F(atual)))
-			print('Delta => ', deltaE)
+			deltaE = ataque  - total_ataques(vizinho)   # exp((F(vizinho) - F(atual)))
+			print('Atual - sucessor  = ', deltaE)
 
-			if deltaE < 0:
+			if deltaE >= 0:
 					atual = vizinho
 					print('Configuracao Atual'),[print(x) for x in  atual], print('Ataques: ', ataque)
 					print('Posicao Rainhas: ',localiza_rainhas(atual))
-					# print('Nova configuracao')
-					# [print(x, end='\n') for x in atual]	
-					# print('posicoes rainhas',localiza_rainhas(atual))
+
 			# Aceitar a jogada com certa probabilidade
 			else:
-					novo = random.randint(0, 10)
-					print(f'Valor para teste : {novo} ')
-					print('Probabilidade : ',math.exp(deltaE)/T) # exp((F(vizinho) - F(atual))/T)
-					if novo < math.exp(deltaE)/T:
+					novo = random.randint(0, 100)
+					#print(f'Valor para teste : {novo} ')
+					print('Probabilidade : ',math.exp(deltaE/T)) # exp((F(vizinho) - F(atual))/T)
+					if novo < math.exp(deltaE/T):
 							atual = vizinho
 							print('Configuracao Atual'),[print(x) for x in  atual], print('Ataques: ', ataque)
 			print()
@@ -174,12 +173,10 @@ def tempera_simulada(atual, p=1, T=TEMPERATURA):
 
 tab = gerar_rainhas_aleatoria()
 
-#print('posicao das rainhas:',[x  for x in localiza_rainhas(tab)])
+[print(x)  for x in (tab)]
 
 if total_ataques(tab) == 0:
-	print('O prorpio tabuleiro eha solucao')
+	print('O prorpio tabuleiro eh a solucao')
 else:
-	# print('Total Ataques =>',total_ataques(tab))
-	# print('\n--------------------------------------------------------------------')
-	# time.sleep(2)
-	tempera_simulada(tab,T=10)
+	t = int(input('digite numero d temperatura: '))
+	tempera_simulada(tab,T=t)
