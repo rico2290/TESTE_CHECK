@@ -153,10 +153,10 @@ def tempera_simulada(atual, p=1, T=TEMPERATURA):
 					# print('posicoes rainhas',localiza_rainhas(atual))
 			# Aceitar a jogada com certa probabilidade
 			else:
-					novo = random.randint(0, 2)
+					novo = random.randint(0, 10)
 					print(f'Valor para teste : {novo} ')
-					print('Probabilidade : ',math.exp(deltaE/T)) # exp((F(vizinho) - F(atual))/T)
-					if novo < math.exp(deltaE/T):
+					print('Probabilidade : ',math.exp(deltaE)/T) # exp((F(vizinho) - F(atual))/T)
+					if novo < math.exp(deltaE)/T:
 							atual = vizinho
 							print('Configuracao Atual'),[print(x) for x in  atual], print('Ataques: ', ataque)
 			print()
@@ -182,4 +182,4 @@ else:
 	# print('Total Ataques =>',total_ataques(tab))
 	# print('\n--------------------------------------------------------------------')
 	# time.sleep(2)
-	tempera_simulada(tab,T=100)
+	tempera_simulada(tab,T=10)
