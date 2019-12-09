@@ -98,8 +98,7 @@ class Tabuleiro:
         ''' Gerar filhos movendo em quatro possiveis direçoes {cima, baixo, esq, dir} '''
         #print('Gerando filhos\n')
         x,y = self.posicao_zero()
-        if x != 2:
-            [x-1,]
+
         mover = [[x+1,y],[x-1,y],[x,y-1],[x,y+1]]
         filhos_gerados = []
         for i in mover:
