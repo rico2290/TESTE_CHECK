@@ -11,23 +11,19 @@ m = [[1,1,0,0],[0,1,0,0],[0,1,1,0],[0,1,1,0]]
 # print()
 
 # ataque nas colunas
-def total_colunas(l):
+def total_ataque_coluna(l):
 	ll = list(zip(*l))
-	ab = [sum(x)-1 for x in ll if sum(x)> 1]
-	#print(ll)
-	return sum(ab)
+	coluna = [sum(x)-1 for x in ll if sum(x)> 1]
+	return sum(coluna)
 
 # ataque nas linhas
-def total_linhas(l):
-	ataque_linhas = 0
-	for x in (l):
-		if sum(x) > 1:
-			ataque_linhas += sum(x)-1
-	return ataque_linhas
+def total_ataque_linha(l):
+	l = [list(x) for x in (l)]
+	linha =[sum(x)-1 for x in l if sum(x)>1]
+	return sum(linha)
 
 # --------------------------------
 def get_linha(matriz):
-	 #print([[c for c in r] for r in matriz])
 	 return [[c for c in r] for r in matriz]
 
 def get_coluna(matriz):
@@ -45,15 +41,13 @@ def get_diagonal_cima_baixo(matriz):
 	 matriz = [b[:i] + r + b[i:] for i, r in enumerate(get_linha(matriz))]
 	 #print('\ndiagonal cima p/baixo',list([[c for c in r if c is not None] for r in get_coluna(matriz)]))
 	 return list([[c for c in r if c is not None] for r in zip(*matriz)])
-
-
-
+#Total de todas as ataques
 def total_ataques(matriz):
 	t_diagonal_cima = [sum(x)- 1 for x in get_diagonal_cima_baixo(matriz) if sum(x) > 1]
 	t_diagonal_baixo = [sum(x)- 1 for x in get_diagonal_baixo_cima(matriz) if sum(x) > 1]
 	#print('TOTAL ATAQUES', total_ataques(matriz))
-	return sum(t_diagonal_baixo)+sum(t_diagonal_cima)+total_colunas(matriz)+total_linhas(matriz)
-#print('TOTAL ATAQUES', total_ataques(matriz))
+	return sum(t_diagonal_baixo)+sum(t_diagonal_cima)+total_ataque_coluna(matriz)+total_ataque_linha(matriz)
+
 # -----------------------------------------------------------------
 
 def random_choice(tamanho=TAMANHOTABULEIRO):
@@ -70,7 +64,6 @@ def random_choice(tamanho=TAMANHOTABULEIRO):
 def quantidade_rainhas(atual):
 	d = 0
 	for x in range(0,len(atual)):
-		#print(quant_ataques)
 		for y in range(0,len(atual)):
 			if atual[x][y] == 1:
 					d += 1
@@ -126,43 +119,43 @@ def move_rainha_aleatoria(atual, p):
 	return atual
 
 def tempera_simulada(atual, p=1, T=TEMPERATURA):
-	[print(x) for x in atual],print('N} rainhas: ', quantidade_rainhas(atual)),print('Ataques: ', total_ataques(atual))
-	print('Posicao Rainhas: ',localiza_rainhas(atual))
-	print()
+	# [print(x) for x in atual],print(' rainhas: ', quantidade_rainhas(atual)),print('Ataques: ', total_ataques(atual))
+	# print('Posicao Rainhas: ',localiza_rainhas(atual))
+	# 
 	achou = False
 	inicio = time.time()
 	for temp in range(T, 0,-1):
 			time.sleep(1)
 			print('TEMPERATURA atual: ', temp)
-			ataque = total_ataques(atual)
+			#ataque = total_ataques(atual)
 			# print('Posicao Rainhas: ',localiza_rainhas(atual))
-			if ataque == 0:
+			if total_ataques(atual) == 0:
 					achou = True
 					break
 			vizinho = move_rainha_aleatoria(copy.deepcopy(atual), p)
 			# print('Nova configuracao')
 			# [print(x, end='\n') for x in vizinho]	
-			deltaE = ataque  - total_ataques(vizinho)   # exp((F(vizinho) - F(atual)))
+			deltaE = total_ataques(atual)  - total_ataques(vizinho)   # exp((F(vizinho) - F(atual)))
 			print('Atual - sucessor  = ', deltaE)
 
-			if deltaE >= 0:
+			if deltaE <= 0:
 					atual = vizinho
-					print('Configuracao Atual'),[print(x) for x in  atual], print('Ataques: ', ataque)
+					print('Configuracao Atual'),[print(x) for x in  atual], print('Ataques: ', total_ataques(atual))
 					print('Posicao Rainhas: ',localiza_rainhas(atual))
 
 			# Aceitar a jogada com certa probabilidade
 			else:
-					novo = random.randint(0, 100)
+					novo = random.random()
 					#print(f'Valor para teste : {novo} ')
 					print('Probabilidade : ',math.exp(deltaE/T)) # exp((F(vizinho) - F(atual))/T)
 					if novo < math.exp(deltaE/T):
 							atual = vizinho
-							print('Configuracao Atual'),[print(x) for x in  atual], print('Ataques: ', ataque)
+							print('Configuracao Atual'),[print(x) for x in  atual], print('Ataques: ', total_ataques(atual))
 			print()
 				
 	if achou:
 		print('Achou a Solucao')
-		print('Ataque =>',ataque)
+		print('Ataque =>',total_ataques(atual))
 		[print(x, end='\n') for x in atual]
 		print('Tempo de execucao: (^^)',(time.time()-inicio))
 	else:
@@ -179,4 +172,5 @@ if total_ataques(tab) == 0:
 	print('O prorpio tabuleiro eh a solucao')
 else:
 	t = int(input('digite numero d temperatura: '))
+	print()
 	tempera_simulada(tab,T=t)

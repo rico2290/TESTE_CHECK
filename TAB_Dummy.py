@@ -4,11 +4,18 @@ from random import sample
 import copy
 
 class Tabuleiro:
-    def __init__(self, tamanho):
+    def __init__(self, tamanho, pai=None):
         self.tamanho = tamanho
         self.tabuleiro = []
-        self.zero_position = [0]*2
+        self.pai = pai
+        self.filhos = []
+        
+    def adiocnar_filho(self, filho):
+        self.filhos.append(filho)
     
+    def adionda_pai(self, pai):
+        self.pai = pai
+
     def preencher_tabuleiro(self):
         #while(True):
         #l = (sample(range(0,self.tamanho*self.tamanho),self.tamanho*self.tamanho))
@@ -19,21 +26,31 @@ class Tabuleiro:
         #             count+=1
         # if(count % 2 == 0):
         #     break
+        # self.tabuleiro.append([2,0,4])
+        # self.tabuleiro.append([3,1,6])
+        # self.tabuleiro.append([7,5,8])  
+           
+        #  OK
+        self.tabuleiro.append([0,1,2])
+        self.tabuleiro.append([4,5,3])
+        self.tabuleiro.append([7,8,6])
 
-        #self.tabuleiro.append([0,1,2])
-        #self.tabuleiro.append([4,5,3])
-        #self.tabuleiro.append([7,8,6])
+        # self.tabuleiro.append([8,2,3])
+        # self.tabuleiro.append([4,6,5])
+        # self.tabuleiro.append([7,1,0]) 
+       
 
-        self.tabuleiro.append([2,0,4])
-        self.tabuleiro.append([3,1,6])
-        self.tabuleiro.append([7,5,8])        
+        # self.tabuleiro.append([2,0,3])
+        # self.tabuleiro.append([1,4,5])
+        # self.tabuleiro.append([7,8,6])        
 
         # self.tabuleiro.append(l[slice(3)])
         # self.tabuleiro.append(l[slice(3,6,1)])
         # self.tabuleiro.append(l[slice(6,9,1)])  
+
         print('Tabuleiro Gerado')
         [print(x) for x in self.tabuleiro]
-        self.zero_position[0], self.zero_position[1] = self.posicao_zero()
+       
         print('\n')  
 
     def verifica_solucao(self):
@@ -86,9 +103,8 @@ class Tabuleiro:
         for i in mover:
             filho = self.movimentar(self.tabuleiro,x,y,i[0],i[1])
             if len(filho) > 1:
-                filho_No = Tabuleiro(self.tamanho)
+                filho_No = Tabuleiro(self.tamanho,pai=self.pai)
                 [filho_No.tabuleiro.append(x) for x in filho]
-                filho_No.zero_position[0], filho_No.zero_position[1] = self.posicao_zero()
                 filhos_gerados.append(filho_No)
                 #print(filho_No.tabuleiro)
         return filhos_gerados
