@@ -6,10 +6,6 @@ TAMANHOTABULEIRO = 4
 TEMPERATURA = 100
 
 
-m = [[1,1,0,0],[0,1,0,0],[0,1,1,0],[0,1,1,0]]
-# [print(x) for x in m]
-# print()
-
 # ataque nas colunas
 def total_ataque_coluna(l):
 	ll = list(zip(*l))
@@ -27,7 +23,6 @@ def get_linha(matriz):
 	 return [[c for c in r] for r in matriz]
 
 def get_coluna(matriz):
-	 #print('SAIDA',list(zip(*matriz)))
 	 return list(zip(*matriz))
 
 def get_diagonal_baixo_cima(matriz):
@@ -41,6 +36,7 @@ def get_diagonal_cima_baixo(matriz):
 	 matriz = [b[:i] + r + b[i:] for i, r in enumerate(get_linha(matriz))]
 	 #print('\ndiagonal cima p/baixo',list([[c for c in r if c is not None] for r in get_coluna(matriz)]))
 	 return list([[c for c in r if c is not None] for r in zip(*matriz)])
+
 #Total de todas as ataques
 def total_ataques(matriz):
 	t_diagonal_cima = [sum(x)- 1 for x in get_diagonal_cima_baixo(matriz) if sum(x) > 1]
@@ -83,10 +79,7 @@ def gerar_rainhas_aleatoria(tamanho=TAMANHOTABULEIRO):
 	lista = []
 	for x in range(0,tamanho):
 			lista.append(randomico[x])
-	#print(randomico)
-	# print('Tabuleiro Gerado')
-	# [print(x, end='\n') for x in lista]
-	# print(f'Rainhas => {d}')
+
 	if d >= (tamanho*tamanho)/tamanho+1:
 			print('Aviso! Pode nao ter solucao ou demorar para achar')	
 	return lista
@@ -109,7 +102,7 @@ def move_rainha_aleatoria(atual, p):
 	while True:
 			x, y = random.choice(localiza_rainhas(atual))
 			#print(f'escolhidos x={x} e y={y}')
-			a = (y + p) % len(atual)
+			a = random.randint(0,len(atual)-1) #(y + p) % len(atual)
 			#print('A = ',a)
 			if atual[x][a] == 0:
 					aux = atual[x][a]
@@ -136,21 +129,24 @@ def tempera_simulada(atual, p=1, T=TEMPERATURA):
 			# print('Nova configuracao')
 			# [print(x, end='\n') for x in vizinho]	
 			deltaE = total_ataques(atual)  - total_ataques(vizinho)   # exp((F(vizinho) - F(atual)))
-			print('Atual - sucessor  = ', deltaE)
+			#print('Atual - sucessor  = ', deltaE)
 
 			if deltaE <= 0:
 					atual = vizinho
-					print('Configuracao Atual'),[print(x) for x in  atual], print('Ataques: ', total_ataques(atual))
+					print('Configuracao Atual'),[print(x) for x in  atual]
+					print('Ataques: ', total_ataques(atual))
 					print('Posicao Rainhas: ',localiza_rainhas(atual))
 
 			# Aceitar a jogada com certa probabilidade
 			else:
-					novo = random.random()
-					#print(f'Valor para teste : {novo} ')
+					novo = random.randint(0,100)
+					print('Valor para teste : ',novo)
 					print('Probabilidade : ',math.exp(deltaE/T)) # exp((F(vizinho) - F(atual))/T)
 					if novo < math.exp(deltaE/T):
 							atual = vizinho
-							print('Configuracao Atual'),[print(x) for x in  atual], print('Ataques: ', total_ataques(atual))
+							print('Configuracao Aceite c/ prob')
+							[print(x) for x in  atual]
+							print('Ataques: ', total_ataques(atual))
 			print()
 				
 	if achou:
@@ -167,6 +163,8 @@ def tempera_simulada(atual, p=1, T=TEMPERATURA):
 tab = gerar_rainhas_aleatoria()
 
 [print(x)  for x in (tab)]
+print('Ataques: ',total_ataques(tab))
+print('Rainhas: ',quantidade_rainhas(tab))
 
 if total_ataques(tab) == 0:
 	print('O prorpio tabuleiro eh a solucao')
