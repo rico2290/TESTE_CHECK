@@ -24,13 +24,14 @@ def get_linha(matriz):
 
 def get_coluna(matriz):
 	 return list(zip(*matriz))
-
+#ataque nas diagonais
 def get_diagonal_baixo_cima(matriz):
 	 b = [None] * (len(matriz) - 1)
 	 matriz = [b[i:] + r + b[:i] for i, r in enumerate([list(x) for x in get_coluna(matriz)])]
 	 #print('\ndiagonal baixo p/cima',list([[c for c in r if c is not None] for r in get_coluna(matriz)]))
 	 return list([[c for c in r if c is not None] for r in zip(*matriz)])
 
+#ataque nas diagonais
 def get_diagonal_cima_baixo(matriz):
 	 b = [None] * (len(matriz) - 1)
 	 matriz = [b[:i] + r + b[i:] for i, r in enumerate(get_linha(matriz))]
@@ -49,8 +50,7 @@ def total_ataques(matriz):
 def random_choice(tamanho=TAMANHOTABULEIRO):
 	prob_alta = (tamanho-1)
 	prob_baixa = (tamanho-tamanho)+1
-	res = randomico = np.random.choice([0, 1], size=(
-			tamanho*tamanho), p=[prob_alta/tamanho, prob_baixa/tamanho])
+	res = randomico = np.random.choice([0, 1],size=(tamanho*tamanho), p=[prob_alta/tamanho, prob_baixa/tamanho])
 	ll = np.array_split(res, tamanho)
 	l = []
 	for x in ll:
@@ -66,12 +66,12 @@ def quantidade_rainhas(atual):
 	return d
 
 def gerar_rainhas_aleatoria(tamanho=TAMANHOTABULEIRO):
-	randomico = random_choice()
+	randomico = random_choice(tamanho)
 	d = quantidade_rainhas(randomico)
 
 	if d <= 2:
 		while True:
-				randomico = random_choice()
+				randomico = random_choice(tamanho)
 				d= quantidade_rainhas(randomico)
 				if d > 2 :
 					break
@@ -83,7 +83,6 @@ def gerar_rainhas_aleatoria(tamanho=TAMANHOTABULEIRO):
 	if d >= (tamanho*tamanho)/tamanho+1:
 			print('Aviso! Pode nao ter solucao ou demorar para achar')	
 	return lista
-
 
 
 def localiza_rainhas(atual):
@@ -112,16 +111,12 @@ def move_rainha_aleatoria(atual, p):
 	return atual
 
 def tempera_simulada(atual, p=1, T=TEMPERATURA):
-	# [print(x) for x in atual],print(' rainhas: ', quantidade_rainhas(atual)),print('Ataques: ', total_ataques(atual))
-	# print('Posicao Rainhas: ',localiza_rainhas(atual))
-	# 
+ 
 	achou = False
 	inicio = time.time()
 	for temp in range(T, 0,-1):
 			time.sleep(1)
 			print('TEMPERATURA atual: ', temp)
-			#ataque = total_ataques(atual)
-			# print('Posicao Rainhas: ',localiza_rainhas(atual))
 			if total_ataques(atual) == 0:
 					achou = True
 					break
@@ -160,7 +155,7 @@ def tempera_simulada(atual, p=1, T=TEMPERATURA):
 
 
 
-tab = gerar_rainhas_aleatoria()
+tab = gerar_rainhas_aleatoria(5)
 
 [print(x)  for x in (tab)]
 print('Ataques: ',total_ataques(tab))

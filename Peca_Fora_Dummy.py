@@ -22,13 +22,13 @@ class No:
         #print('posicao a movimentar: ',posicao_mover)
         filhos = []
         for i in posicao_mover:
-            filho = self.shuffle(self.tamanho,x,y,i[0],i[1])
+            filho = self.movimento(self.tamanho,x,y,i[0],i[1])
             if filho is not None:
                 filho_No = No(filho,self.nivel+1,0)
                 filhos.append(filho_No)
         return filhos
         
-    def shuffle(self,puz,x1,y1,x2,y2):
+    def movimento(self,puz,x1,y1,x2,y2):
         ''' Mover zero para a posição dada. Caso a posição seja >= 3, retorna vazio '''
         if x2 >= 0 and x2 < len(self.tamanho) and y2 >= 0 and y2 < len(self.tamanho):
             lista_temp = []
@@ -41,7 +41,6 @@ class No:
             return None
     def copiar(self,lista):
         ''' Criar filho a partir do No lista'''
-        #temp = []
         temp = deepcopy(lista)
         return temp    
             
