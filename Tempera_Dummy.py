@@ -1,6 +1,7 @@
 import os,time,random,sys,math,copy
 #import itertools as it
 import numpy as np
+import copy, random, math
 
 TAMANHOTABULEIRO = 4
 TEMPERATURA = 100
@@ -103,9 +104,10 @@ def move_rainha_aleatoria(atual, p):
 			#print(f'escolhidos x={x} e y={y}')
 			a = random.randint(0,len(atual)-1) #(y + p) % len(atual)
 			#print('A = ',a)
-			if atual[x][a] == 0:
-					aux = atual[x][a]
-					atual[x][a] = atual[x][y]
+			b = random.randint(0,len(atual)-1)
+			if atual[b][a] == 0:
+					aux = atual[b][a]
+					atual[b][a] = atual[x][y]
 					atual[x][y] = aux #atual[x][a] # 
 					break
 	return atual
@@ -113,57 +115,53 @@ def move_rainha_aleatoria(atual, p):
 def tempera_simulada(atual, p=1, T=TEMPERATURA):
  
 	achou = False
+	passos = 0
+	lista = [atual]
 	inicio = time.time()
 	for temp in range(T, 0,-1):
+			passos +=1
 			time.sleep(1)
-			print('TEMPERATURA atual: ', temp)
+			#print('TEMPERATURA atual: ', temp)
 			if total_ataques(atual) == 0:
 					achou = True
 					break
 			vizinho = move_rainha_aleatoria(copy.deepcopy(atual), p)
-			# print('Nova configuracao')
-			# [print(x, end='\n') for x in vizinho]	
-			deltaE = total_ataques(atual)  - total_ataques(vizinho)   # exp((F(vizinho) - F(atual)))
-			#print('Atual - sucessor  = ', deltaE)
-
-			if deltaE <= 0:
+			if vizinho not in lista:
+				lista.append(vizinho)
+				#print(len(lista))
+				deltaE = total_ataques(vizinho) - total_ataques(atual)
+				if deltaE <= 0:
 					atual = vizinho
-					print('Configuracao Atual'),[print(x) for x in  atual]
-					print('Ataques: ', total_ataques(atual))
-					print('Posicao Rainhas: ',localiza_rainhas(atual))
-
-			# Aceitar a jogada com certa probabilidade
-			else:
-					novo = random.randint(0,100)
-					print('Valor para teste : ',novo)
-					print('Probabilidade : ',math.exp(deltaE/T)) # exp((F(vizinho) - F(atual))/T)
+					print('Nova')
+					[print(x) for x in atual]
+					print('Ataques',total_ataques(atual))
+				else:
+					novo = random.randint(0,T)
 					if novo < math.exp(deltaE/T):
-							atual = vizinho
-							print('Configuracao Aceite c/ prob')
-							[print(x) for x in  atual]
-							print('Ataques: ', total_ataques(atual))
-			print()
-				
+						atual = vizinho
+						#print('Novo {} - exp {}'.format(novo,math.exp(deltaE/T)))
+						[print(x) for x in atual]
+						print('Ataques', total_ataques(atual))
+					else:
+						pass
+						#print('O valor {} nao aceito'.format(novo))
 	if achou:
-		print('Achou a Solucao')
-		print('Ataque =>',total_ataques(atual))
-		[print(x, end='\n') for x in atual]
-		print('Tempo de execucao: (^^)',(time.time()-inicio))
+		print('Achou com {} passos'.format(passos))
 	else:
-		[print(x, end='\n') for x in atual]
-		print('Nao achou solucao\nTempo de execuccao: ',(time.time()-inicio))
+		print('Nao achou com {}'.format(passos))
 
 
 
-tab = gerar_rainhas_aleatoria(5)
 
-[print(x)  for x in (tab)]
-print('Ataques: ',total_ataques(tab))
-print('Rainhas: ',quantidade_rainhas(tab))
+inicio = gerar_rainhas_aleatoria(8)
 
-if total_ataques(tab) == 0:
-	print('O prorpio tabuleiro eh a solucao')
+[print(x)  for x in (inicio)]
+print('Ataques: ',total_ataques(inicio))
+print('Rainhas: ',quantidade_rainhas(inicio))
+
+if total_ataques(inicio) == 0:
+	print('O prorpio iniciouleiro eh a solucao')
 else:
 	t = int(input('digite numero d temperatura: '))
 	print()
-	tempera_simulada(tab,T=t)
+	tempera_simulada(inicio,T=t)
