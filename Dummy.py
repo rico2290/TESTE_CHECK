@@ -36,40 +36,47 @@ class Tabuleiro:
         ''' Gerar filhos movendo em quatro possiveis direçoes {cima, baixo, esq, dir} '''
         x, y = self.posicao_do_zero(self.data)
 
-        mover = [[x+1,y],[x-1,y],[x,y-1],[x,y+1]]
-        #filhos_gerados = []
-        for i in mover:
-            filho = self.move(self.data,x,y,i[0],i[1])
-            if len(filho) > 1:
-                if self.pai is not None:
-                    if filho != self.data:
-                        No_filho = Tabuleiro(filho,pai=Tabuleiro(self.data,self.pai))
-                        #[No_filho.tabuleiro.append(x) for x in filho]
-                        self.filhos.append(No_filho.data)
-                        #filhos_gerados.append(No_filho)
-
-                else:
-                    No_filho = Tabuleiro(filho,pai=Tabuleiro(self.data,self.pai))
-                    #[No_filho.tabuleiro.append(x) for x in filho]
-                    self.filhos.append(No_filho.data)
-                    #filhos_gerados.append(No_filho)
-                    
-
-        return self.filhos
-                
-
-    def move(self,data,x1,y1,x2,y2):
-        ''' Mover zero para a posição dada. Caso a posição seja >= 3, retorna vazio '''
-        if x2 >= 0 and x2 < len(self.data) and y2 >= 0 and y2 < len(self.data):
-            #lista_temp = []
+        if x!= 0:
             lista_temp = copy.deepcopy(self.data)
-            temp = lista_temp[x2][y2]
-            lista_temp[x2][y2] = lista_temp[x1][y1]
-            lista_temp[x1][y1] = temp
-            return lista_temp
-        else:
-            return []
+            temp = lista_temp[x-1][y]
+            lista_temp[x-1][y] = 0
+            lista_temp[x][y] = temp   
+            if self.pai is not None:
+                if lista_temp != self.pai.data:
+                    novo = Tabuleiro(lista_temp,pai=Tabuleiro(self.data,self.pai))         
+                    self.filhos.append(novo)
 
+        if x!= 2:
+            lista_temp = copy.deepcopy(self.data)
+            temp = lista_temp[x+1][y]
+            lista_temp[x+1][y] = 0
+            lista_temp[x][y] = temp   
+            if self.pai is not None:
+                if lista_temp != self.pai.data:
+                    novo = Tabuleiro(lista_temp,pai=Tabuleiro(self.data,self.pai))         
+                    self.filhos.append(novo)   
+
+        if y!= 2:
+            lista_temp = copy.deepcopy(self.data)
+            temp = lista_temp[x][y+1]
+            lista_temp[x][y+1] = 0
+            lista_temp[x][y] = temp   
+            if self.pai is not None:
+                if lista_temp != self.pai.data:
+                    novo = Tabuleiro(lista_temp,pai=Tabuleiro(self.data,self.pai))         
+                    self.filhos.append(novo)
+
+        if y!= 0:
+            lista_temp = copy.deepcopy(self.data)
+            temp = lista_temp[x][y-1]
+            lista_temp[x][y-1] = 0
+            lista_temp[x][y] = temp   
+            if self.pai is not None:
+                if lista_temp != self.pai.data:
+                    novo = Tabuleiro(lista_temp,pai=Tabuleiro(self.data,self.pai))         
+                    self.filhos.append(novo)  
+
+        return self.filhos                                                       
 
     def manhatan_distancia_ideal(self):
         d = 0
@@ -160,6 +167,7 @@ aleatorio = []
 aleatorio.append(temp[slice(3)])
 aleatorio.append(temp[slice(3,6,1)])
 aleatorio.append(temp[slice(6,9,1)]) 
+print(aleatorio)
 
 s = BFS_Dummy(aleatorio)
 imprimir_percurso(s)
