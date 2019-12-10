@@ -1,7 +1,7 @@
 import numpy as np
 from random import randint
 from random import sample
-import copy
+from copy import deepcopy
 
 class Tabuleiro:
     def __init__(self, data,pai=None):
@@ -37,7 +37,7 @@ class Tabuleiro:
         x, y = self.posicao_do_zero(self.data)
 
         if x!= 0:
-            lista_temp = copy.deepcopy(self.data)
+            lista_temp = deepcopy(self.data)
             temp = lista_temp[x-1][y]
             lista_temp[x-1][y] = 0
             lista_temp[x][y] = temp   
@@ -47,7 +47,7 @@ class Tabuleiro:
                     self.filhos.append(novo)
 
         if x!= 2:
-            lista_temp = copy.deepcopy(self.data)
+            lista_temp = deepcopy(self.data)
             temp = lista_temp[x+1][y]
             lista_temp[x+1][y] = 0
             lista_temp[x][y] = temp   
@@ -57,7 +57,7 @@ class Tabuleiro:
                     self.filhos.append(novo)   
 
         if y!= 2:
-            lista_temp = copy.deepcopy(self.data)
+            lista_temp = deepcopy(self.data)
             temp = lista_temp[x][y+1]
             lista_temp[x][y+1] = 0
             lista_temp[x][y] = temp   
@@ -67,7 +67,7 @@ class Tabuleiro:
                     self.filhos.append(novo)
 
         if y!= 0:
-            lista_temp = copy.deepcopy(self.data)
+            lista_temp = deepcopy(self.data)
             temp = lista_temp[x][y-1]
             lista_temp[x][y-1] = 0
             lista_temp[x][y] = temp   
@@ -118,6 +118,7 @@ def BFS_Dummy(inicial):
     while passos > 0:
         # gera filhos  enquanto nao achar a solução
         while not achou:
+            print('entrando')
             #gera filhos a apartir da lista pai
             for filho in lista_pai:
                 #if filho not in lista_filhos:
@@ -133,11 +134,11 @@ def BFS_Dummy(inicial):
                     achou = True
                     return filho
             passos -=1
-            print(passos)
+            # print(passos)
 
             # Fase de otimização
             lista_pai.clear()
-            lista_pai = copy.deepcopy(lista_filhos)
+            lista_pai = deepcopy(lista_filhos)
             lista_filhos.clear()
 
         if  passos == 0:
