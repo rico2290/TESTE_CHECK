@@ -31,18 +31,18 @@ class Tabuleiro:
         # self.tabuleiro.append([7,5,8])  
            
         #  OK
-        # self.tabuleiro.append([0,1,2])
-        # self.tabuleiro.append([4,5,3])
-        # self.tabuleiro.append([7,8,6])
+        self.tabuleiro.append([0,1,2])
+        self.tabuleiro.append([4,5,3])
+        self.tabuleiro.append([7,8,6])
 
         # self.tabuleiro.append([8,2,3])
         # self.tabuleiro.append([4,6,5])
         # self.tabuleiro.append([7,1,0]) 
        
 
-        self.tabuleiro.append([1,8,2])
-        self.tabuleiro.append([0,4,3])
-        self.tabuleiro.append([7,6,5])        
+        #self.tabuleiro.append([1,8,2])
+        #self.tabuleiro.append([0,4,3])
+        #self.tabuleiro.append([7,6,5])        
 
         # self.tabuleiro.append(l[slice(3)])
         # self.tabuleiro.append(l[slice(3,6,1)])
@@ -94,7 +94,7 @@ class Tabuleiro:
         return True
 
 
-    def gerar_filhos_tabuleiro(self):
+    def gerar_filhos_tabuleiro(self,tab):
         ''' Gerar filhos movendo em quatro possiveis direçoes {cima, baixo, esq, dir} '''
         #print('Gerando filhos\n')
         x,y = self.posicao_zero()
@@ -102,11 +102,11 @@ class Tabuleiro:
         mover = [[x+1,y],[x-1,y],[x,y-1],[x,y+1]]
         filhos_gerados = []
         for i in mover:
-            filho = self.movimentar(self.tabuleiro,x,y,i[0],i[1])
+            filho = self.movimentar(tab.tabuleiro,x,y,i[0],i[1])
             if len(filho) > 1:
-                No_filho = Tabuleiro(self.tamanho,pai=self.tabuleiro)
+                No_filho = Tabuleiro(self.tamanho,pai=tab)
                 [No_filho.tabuleiro.append(x) for x in filho]
-                self.filhos.append((tuple(No_filho.tabuleiro)))
+                tab.filhos.append((tuple(No_filho.tabuleiro)))
                 filhos_gerados.append(No_filho)
 
         return filhos_gerados
